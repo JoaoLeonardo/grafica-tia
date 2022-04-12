@@ -1,0 +1,68 @@
+agent.png
+size: 30, 231
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+DOWN
+  rotate: false
+  xy: 0, 0
+  size: 15, 39
+  orig: 15, 39
+  offset: 0, 0
+  index: -1
+DOWNLEFT
+  rotate: false
+  xy: 0, 39
+  size: 24, 32
+  orig: 24, 32
+  offset: 0, 0
+  index: -1
+DOWNRIGHT
+  rotate: false
+  xy: 0, 71
+  size: 24, 32
+  orig: 24, 32
+  offset: 0, 0
+  index: -1
+LEFT
+  rotate: false
+  xy: 0, 103
+  size: 24, 32
+  orig: 24, 32
+  offset: 0, 0
+  index: -1
+RIGHT
+  rotate: false
+  xy: 0, 135
+  size: 24, 32
+  orig: 24, 32
+  offset: 0, 0
+  index: -1
+UP
+  rotate: false
+  xy: 15, 0
+  size: 15, 39
+  orig: 15, 39
+  offset: 0, 0
+  index: -1
+UPLEFT
+  rotate: false
+  xy: 0, 167
+  size: 24, 32
+  orig: 24, 32
+  offset: 0, 0
+  index: -1
+UPRIGHT
+  rotate: false
+  xy: 0, 199
+  size: 24, 32
+  orig: 24, 32
+  offset: 0, 0
+  index: -1
+HALT
+  rotate: false
+  xy: 0, 135
+  size: 24, 32
+  orig: 24, 32
+  offset: 0, 0
+  index: -1
