@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
 import com.gdx.tia.TacticalInfiltrationAction;
@@ -24,6 +25,8 @@ public class Bullet implements Pool.Poolable {
     public boolean active;
     public boolean boundByPlayer;
 
+    public ShaderProgram shader;
+
     public Bullet() {
         position = new Vector2();
         movementDirection = Direction.RIGHT.displacementVector;
@@ -31,6 +34,8 @@ public class Bullet implements Pool.Poolable {
         bulletSprite.scale(1.2f);
         active = false;
         boundByPlayer = false;
+        shader = new ShaderProgram(Gdx.files.internal("shaders/glow.vsh"), Gdx.files.internal("shaders/glow.fsh"));
+        ShaderProgram.pedantic = false;
     }
 
     public void init(float initialX, float initialY, Direction direction, boolean shotByPlayer) {
@@ -48,6 +53,7 @@ public class Bullet implements Pool.Poolable {
     }
 
     public void update(Batch batch) {
+        this.shader.setUniformMatrix("uni_projTrans", GameScreen.ref.getCamera().projection);
         if (!active) return;
 
         final float mvSpeed = MOVEMENT_SPEED * Gdx.graphics.getDeltaTime();
@@ -57,7 +63,9 @@ public class Bullet implements Pool.Poolable {
         active = !GameScreen.ref.hasCollidedWithMap(bulletSprite.getBoundingRectangle(), false);
 
         if (active) {
+            batch.setShader(shader);
             bulletSprite.draw(batch);
+            batch.setShader(null);
 
             if (World.currentStage.hasCollidedWithAliveEntity(this)) {
                 active = false;
