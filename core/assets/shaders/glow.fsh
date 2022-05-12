@@ -6,5 +6,5 @@ uniform sampler2D u_sampler2D; // usado para "extrair" (amostra) os pixels da te
 
 void main() {
     // extrai a cor do pixel (texture2D é uma função built-in) e a transforma de acordo com o input
-    gl_FragColor = texture2D(u_sampler2D, v_texCoord0) * vec4(250.0, 216.0, 89.0, 0.8);
+    gl_FragColor = texture2D(u_sampler2D, v_texCoord0) * vec4(255.0, 255.0, 0.0, 1.0);
 }

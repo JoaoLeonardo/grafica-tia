@@ -53,8 +53,8 @@ public class GameScreen implements Screen {
 
         objects = map.getLayers().get(2).getObjects();
         hazardGround = map.getLayers().get(3).getObjects();
-        enemySpawn = map.getLayers().get(5).getObjects();
         playerSpawn = map.getLayers().get(4).getObjects().getByType(RectangleMapObject.class).get(0);
+        enemySpawn = map.getLayers().get(5).getObjects();
 
         renderer = new OrthogonalTiledMapRenderer(map);
         screenCenter = new Vector2((float) Gdx.graphics.getWidth() / 2, (float) Gdx.graphics.getHeight() / 2);

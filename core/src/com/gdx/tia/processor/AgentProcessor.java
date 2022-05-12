@@ -14,7 +14,7 @@ import com.gdx.tia.screens.GameScreen;
 
 public class AgentProcessor implements InputProcessor {
 
-    private final int MOVEMENT_SPEED = 200;
+    private final int MOVEMENT_SPEED = 300;
 
     private final AgentController agentController;
 

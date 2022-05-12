@@ -16,7 +16,7 @@ import java.util.Random;
 
 public class Enemy extends AliveEntity implements Pool.Poolable {
 
-    private final static int MOVEMENT_SPEED = 50;
+    private final static int MOVEMENT_SPEED = 100;
 
     // espaço entre uma direção e outra (de 30 à -30)
     private final static int X_SENSITIVITY = 30;
