@@ -18,7 +18,7 @@ import com.gdx.tia.screens.GameScreen;
 
 public class Bullet implements Pool.Poolable {
 
-    private final int MOVEMENT_SPEED = 0;
+    private final int MOVEMENT_SPEED = 500;
 
     private final Vector2 position;
 
@@ -33,7 +33,7 @@ public class Bullet implements Pool.Poolable {
         position = new Vector2();
         movementDirection = Direction.RIGHT.displacementVector;
         bulletSprite = new Sprite(TacticalInfiltrationAction.assetManager.get("sprites/bullet.png", Texture.class));
-        bulletSprite.scale(1.2f);
+        bulletSprite.scale(2f);
         active = false;
         boundByPlayer = false;
     }
@@ -65,7 +65,7 @@ public class Bullet implements Pool.Poolable {
             batch.setShader(getShader());
             getShader().setUniformf("u_glowColor", 255.0f, 0.0f, 0.0f, 1.0f);
             Vector3 screenCoord = getScreenCoord();
-            getShader().setUniformf("u_glowSource", screenCoord.x + 2, screenCoord.y + 2);
+            getShader().setUniformf("u_glowSource", screenCoord.x + 3, screenCoord.y + 3);
 
             if (!getShader().isCompiled()) {
                 throw new GdxRuntimeException("Couldn't compile shader: " + getShader().getLog());
