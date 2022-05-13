@@ -19,6 +19,7 @@ import com.gdx.tia.TacticalInfiltrationAction;
 import com.gdx.tia.element.Stage;
 import com.gdx.tia.element.World;
 import com.gdx.tia.enums.Direction;
+import com.gdx.tia.shaders.ShaderResource;
 
 public class GameScreen implements Screen {
 
@@ -41,6 +42,8 @@ public class GameScreen implements Screen {
 
     private Sound theme;
 
+    private ShaderResource shaderResource;
+
     public GameScreen() {
         ref = this;
         loadAssets();
@@ -50,6 +53,7 @@ public class GameScreen implements Screen {
     public void show() {
         camera = new OrthographicCamera();
         map = new TmxMapLoader().load("tiles/outdoors.tmx");
+        shaderResource = new ShaderResource();
 
         objects = map.getLayers().get(2).getObjects();
         hazardGround = map.getLayers().get(3).getObjects();
@@ -159,4 +163,6 @@ public class GameScreen implements Screen {
     public MapObjects getEnemySpawn() { return enemySpawn; }
 
     public Vector2 getMouseInterval() { return mDirInterval; }
+
+    public ShaderResource getShaderResource() { return this.shaderResource; }
 }

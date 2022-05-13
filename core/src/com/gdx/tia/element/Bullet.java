@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Pool;
 import com.gdx.tia.TacticalInfiltrationAction;
 import com.gdx.tia.controller.AgentController;
@@ -27,8 +28,6 @@ public class Bullet implements Pool.Poolable {
     public boolean active;
     public boolean boundByPlayer;
 
-    public ShaderProgram shader;
-
     public Bullet() {
         position = new Vector2();
         movementDirection = Direction.RIGHT.displacementVector;
@@ -36,8 +35,6 @@ public class Bullet implements Pool.Poolable {
         bulletSprite.scale(1.2f);
         active = false;
         boundByPlayer = false;
-        shader = new ShaderProgram(Gdx.files.internal("shaders/glow.vsh"), Gdx.files.internal("shaders/glow.fsh"));
-        ShaderProgram.pedantic = false;
     }
 
     public void init(float initialX, float initialY, Direction direction, boolean shotByPlayer) {
@@ -55,7 +52,6 @@ public class Bullet implements Pool.Poolable {
     }
 
     public void update(Batch batch) {
-        this.shader.setUniformMatrix("uni_projTrans", GameScreen.ref.getCamera().projection);
         if (!active) return;
 
         final float mvSpeed = MOVEMENT_SPEED * Gdx.graphics.getDeltaTime();
@@ -65,7 +61,12 @@ public class Bullet implements Pool.Poolable {
         active = !GameScreen.ref.hasCollidedWithMap(bulletSprite.getBoundingRectangle(), false);
 
         if (active) {
-            batch.setShader(shader);
+            batch.setShader(getShader());
+
+            if (!getShader().isCompiled()) {
+                throw new GdxRuntimeException("Couldn't compile shader: " + getShader().getLog());
+            }
+
             bulletSprite.draw(batch);
             batch.setShader(null);
 
@@ -98,4 +99,10 @@ public class Bullet implements Pool.Poolable {
     private int getOffsetY(Direction direction) { return Direction.DOWNRIGHT.equals(direction) ? 12 : 16; }
 
     public Sprite getBulletSprite() { return bulletSprite; }
+
+    public ShaderProgram getShader() {
+        GameScreen.ref.getShaderResource().getGlowShader()
+                .setUniformf("u_glowColor", 255.0f, 0.0f, 0.0f, 1.0f);
+        return GameScreen.ref.getShaderResource().getGlowShader();
+    }
 }
