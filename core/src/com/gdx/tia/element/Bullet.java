@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Pool;
 import com.gdx.tia.TacticalInfiltrationAction;
@@ -17,7 +18,7 @@ import com.gdx.tia.screens.GameScreen;
 
 public class Bullet implements Pool.Poolable {
 
-    private final int MOVEMENT_SPEED = 400;
+    private final int MOVEMENT_SPEED = 0;
 
     private final Vector2 position;
 
@@ -62,6 +63,9 @@ public class Bullet implements Pool.Poolable {
 
         if (active) {
             batch.setShader(getShader());
+            getShader().setUniformf("u_glowColor", 255.0f, 0.0f, 0.0f, 1.0f);
+            Vector3 screenCoord = getScreenCoord();
+            getShader().setUniformf("u_glowSource", screenCoord.x + 2, screenCoord.y + 2);
 
             if (!getShader().isCompiled()) {
                 throw new GdxRuntimeException("Couldn't compile shader: " + getShader().getLog());
@@ -98,11 +102,11 @@ public class Bullet implements Pool.Poolable {
 
     private int getOffsetY(Direction direction) { return Direction.DOWNRIGHT.equals(direction) ? 12 : 16; }
 
+    private Vector3 getScreenCoord() {
+        return GameScreen.ref.getCamera().project(new Vector3(position.x, position.y, 0));
+    }
+
     public Sprite getBulletSprite() { return bulletSprite; }
 
-    public ShaderProgram getShader() {
-        GameScreen.ref.getShaderResource().getGlowShader()
-                .setUniformf("u_glowColor", 255.0f, 0.0f, 0.0f, 1.0f);
-        return GameScreen.ref.getShaderResource().getGlowShader();
-    }
+    public ShaderProgram getShader() { return GameScreen.ref.getShaderResource().getGlowShader(); }
 }
