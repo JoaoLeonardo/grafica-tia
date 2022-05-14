@@ -17,11 +17,13 @@ public class HudController implements ActionController {
 
     private Sprite heartSprite;
     private BitmapFont font;
+    private BitmapFont fontShadow;
 
     @Override
     public void create() {
         ref = this;
         font = new BitmapFont(Gdx.files.internal("ui/tia.fnt"));
+        fontShadow = new BitmapFont(Gdx.files.internal("ui/tia-black.fnt"));
         heartSprite = TacticalInfiltrationAction.assetManager.get("ui/ui-sheet.txt", TextureAtlas.class).createSprite("heart");
     }
 
@@ -58,6 +60,10 @@ public class HudController implements ActionController {
         float scoreX = onCameraMaxX - (font.getScaleX() * score.length() * (UI_ELEMENTS_PADDING + scoreCorrection)) - UI_ELEMENTS_PADDING;
         float scoreY = onCameraMaxY - UI_ELEMENTS_PADDING;
 
+        fontShadow.draw(batch, score, scoreX+2, scoreY);
+        fontShadow.draw(batch, score, scoreX-2, scoreY);
+        fontShadow.draw(batch, score, scoreX, scoreY-2);
+        fontShadow.draw(batch, score, scoreX, scoreY+2);
         font.draw(batch, score, scoreX, scoreY);
     }
 

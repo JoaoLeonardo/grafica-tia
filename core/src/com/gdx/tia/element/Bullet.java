@@ -62,15 +62,7 @@ public class Bullet implements Pool.Poolable {
         active = !GameScreen.ref.hasCollidedWithMap(bulletSprite.getBoundingRectangle(), false);
 
         if (active) {
-            batch.setShader(getShader());
-            getShader().setUniformf("u_glowColor", 255.0f, 0.0f, 0.0f, 1.0f);
-            Vector3 screenCoord = getScreenCoord();
-            getShader().setUniformf("u_glowSource", screenCoord.x + 3, screenCoord.y + 3);
-
-            if (!getShader().isCompiled()) {
-                throw new GdxRuntimeException("Couldn't compile shader: " + getShader().getLog());
-            }
-
+            applyShader(batch);
             bulletSprite.draw(batch);
             batch.setShader(null);
 
@@ -79,6 +71,18 @@ public class Bullet implements Pool.Poolable {
                 if (boundByPlayer) AgentController.ref.getAgent().increaseScoreByKill();
             }
         }
+    }
+
+    private void applyShader(Batch batch) {
+        batch.setShader(getShader());
+
+        float red = this.boundByPlayer ? 255.0f : 255.0f;
+        float green = this.boundByPlayer ? 0.0f : 0.0f;
+        float blue = this.boundByPlayer ? 0.0f : 255.0f;
+        getShader().setUniformf("u_glowColor", red, green, blue, 1.0f);
+
+        Vector3 screenCoord = getScreenCoord();
+        getShader().setUniformf("u_glowSource", screenCoord.x + 3, screenCoord.y + 3);
     }
 
     @Override

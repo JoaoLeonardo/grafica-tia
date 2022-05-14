@@ -138,28 +138,28 @@
 </data>
  </layer>
  <objectgroup id="3" name="collision-full">
-  <object id="4" x="384.667" y="512.667" width="158" height="61.3333"/>
-  <object id="8" x="416.667" y="479.333" width="94" height="32.6667"/>
-  <object id="9" x="447.333" y="447.333" width="32" height="29.3333"/>
-  <object id="10" x="735.333" y="255.333" width="32.6667" height="32.6667"/>
-  <object id="11" x="704.667" y="287.333" width="94" height="33.3333"/>
-  <object id="12" x="672.667" y="320" width="158" height="62"/>
-  <object id="17" x="896" y="895.333" width="64" height="97.333"/>
-  <object id="18" x="959.333" y="927.333" width="192" height="65.1666"/>
-  <object id="19" x="1151.33" y="896" width="64.6667" height="96.3785"/>
-  <object id="21" x="416" y="1311.33" width="31.3333" height="31.3333"/>
-  <object id="22" x="512" y="1311.33" width="32" height="30.6667"/>
-  <object id="23" x="416" y="1470.67" width="31.3333" height="31.3333"/>
-  <object id="24" x="512" y="1471.33" width="31.3333" height="32.6667"/>
-  <object id="53" x="352" y="1504" width="255.333" height="13.1667"/>
-  <object id="54" x="353.333" y="1344" width="254.667" height="16.3333"/>
-  <object id="30" x="1845.67" y="72.3333" width="116.333" height="1729.34"/>
-  <object id="33" x="204.667" y="77" width="1636.42" height="126.333"/>
-  <object id="29" x="82" y="76.6666" width="120.667" height="1724.73"/>
-  <object id="27" x="85.6667" y="1804.66" width="1876.33" height="122.667"/>
+  <object id="4" x="377.667" y="504.167" width="169.5" height="69.8333"/>
+  <object id="8" x="416.667" y="469.333" width="94" height="42.6667"/>
+  <object id="9" x="442.333" y="440.833" width="42" height="38.8333"/>
+  <object id="10" x="731.833" y="249.333" width="39.1667" height="38.6667"/>
+  <object id="11" x="700.667" y="283.333" width="104.5" height="37.3333"/>
+  <object id="12" x="667.167" y="320" width="168.5" height="62"/>
+  <object id="17" x="896" y="878.333" width="64" height="114.333"/>
+  <object id="18" x="959.333" y="896" width="192" height="96.4999"/>
+  <object id="19" x="1151.33" y="878" width="64.6667" height="114.379"/>
+  <object id="21" x="416" y="1297.33" width="31.3333" height="45.3333"/>
+  <object id="22" x="512" y="1296.66" width="32" height="45.3334"/>
+  <object id="23" x="416" y="1458.67" width="31.3333" height="43.3333"/>
+  <object id="24" x="512" y="1457.66" width="31.3333" height="46.3334"/>
+  <object id="53" x="352" y="1489.67" width="255.333" height="27.5"/>
+  <object id="54" x="353.333" y="1332.67" width="254.667" height="27.6666"/>
+  <object id="30" x="1845.67" y="72.3333" width="44.333" height="1729.34"/>
+  <object id="33" x="204.667" y="156" width="1636.42" height="47.333"/>
+  <object id="29" x="160" y="153.667" width="42.667" height="1647.73"/>
+  <object id="27" x="159.667" y="1792.66" width="1733.33" height="60.667"/>
  </objectgroup>
  <objectgroup id="4" name="collision-walk">
-  <object id="90" x="1346" y="414" width="156" height="94"/>
+  <object id="90" x="1341.5" y="409.5" width="165" height="98.5"/>
  </objectgroup>
  <objectgroup id="5" name="spawn">
   <object id="35" x="1024" y="1087" width="32" height="31"/>

@@ -146,8 +146,8 @@ public class GameScreen implements Screen {
     }
 
     public void playTheme() {
-        //long id = theme.play(0.1f);
-        //theme.setLooping(id, true);
+        long id = theme.play(0.1f);
+        theme.setLooping(id, true);
     }
 
     private void loadAssets() {

@@ -11,7 +11,7 @@ public class DesktopLauncher {
 		config.useGL30 = true;
 		config.width = 1024;
 		config.height = 720;
-		//config.fullscreen = true;
+		config.fullscreen = true;
 		new LwjglApplication(new TacticalInfiltrationAction(), config);
 	}
 }
