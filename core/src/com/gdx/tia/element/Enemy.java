@@ -74,7 +74,7 @@ public class Enemy extends AliveEntity implements Pool.Poolable {
                 );
             }
         } else {
-            // desvia do objeto o agente
+            // desvia do objeto
             dodgeObject();
         }
     }

@@ -15,8 +15,8 @@ public class CollisionUtils {
 
     public static Direction getDiversionDirection(Direction direction) {
         switch (direction) {
-            case UP: return random.nextBoolean() ? Direction.LEFT : Direction.RIGHT;
-            case DOWN: return random.nextBoolean() ? Direction.RIGHT : Direction.LEFT;
+            case UP: return random.nextBoolean() ? Direction.DOWNLEFT : Direction.DOWNRIGHT;
+            case DOWN: return random.nextBoolean() ? Direction.UPRIGHT : Direction.UPLEFT;
             case RIGHT: return random.nextBoolean() ? Direction.DOWN : Direction.UP;
             case LEFT: return random.nextBoolean() ? Direction.UP : Direction.DOWN;
             case UPRIGHT: return random.nextBoolean() ? Direction.LEFT : Direction.DOWN;
