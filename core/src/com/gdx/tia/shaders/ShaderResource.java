@@ -17,8 +17,8 @@ public class ShaderResource {
 
     private void createShaders() {
         this.glowShader = new ShaderProgram(
-                Gdx.files.internal("shaders/glow.vsh"),
-                Gdx.files.internal("shaders/glow.fsh")
+                Gdx.files.local("shaders/glow.vsh"),
+                Gdx.files.local("shaders/glow.fsh")
         );
     }
 

@@ -19,6 +19,8 @@ public abstract class AliveEntity {
         hasBeenHit = true;
     }
 
+    public void kill() { alive = false; }
+
     public void revive() { alive = true; }
 
 }

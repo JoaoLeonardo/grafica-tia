@@ -38,7 +38,7 @@ public class Enemy extends AliveEntity implements Pool.Poolable {
 
     public Enemy() {
         particleEffect = new ParticleEffect();
-        particleEffect.load(Gdx.files.internal("effects/enemy-hit.p"), Gdx.files.internal("effects"));
+        particleEffect.load(Gdx.files.local("effects/enemy-hit.p"), Gdx.files.local("effects"));
         particleEffect.start();
         random = new Random();
 
@@ -144,7 +144,6 @@ public class Enemy extends AliveEntity implements Pool.Poolable {
     @Override
     public void decreaseHealth() {
         super.decreaseHealth();
-
         if (!alive) startParticleEffect();
     }
 

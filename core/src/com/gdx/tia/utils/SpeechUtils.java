@@ -30,7 +30,8 @@ public class SpeechUtils {
     public Random random;
 
     public SpeechUtils() {
-        Texture txtBubbleTexture = TacticalInfiltrationAction.assetManager.get("sprites/text-bubble.png", Texture.class);
+        Texture txtBubbleTexture = TacticalInfiltrationAction.assetManager.get(
+                "sprites/text-bubble.png", Texture.class);
 
         textBubblePatch = new NinePatch(txtBubbleTexture, 12, 12, 7, 7);
         glyphLayout = new GlyphLayout();
@@ -54,7 +55,8 @@ public class SpeechUtils {
             final float posY = speakerPos.y + 24;
 
             glyphLayout.setText(font, currentLine);
-            textBubblePatch.draw(batch, posX, posY, glyphLayout.width + BUBBLE_PADDING, 32 + BUBBLE_PADDING);
+            textBubblePatch.draw(batch, posX, posY,
+                    glyphLayout.width + BUBBLE_PADDING, 32 + BUBBLE_PADDING);
             font.draw(batch, glyphLayout, posX + BUBBLE_HALF_PADDING, posY + 32 + BUBBLE_HALF_PADDING);
         } else {
             currentLine = null;

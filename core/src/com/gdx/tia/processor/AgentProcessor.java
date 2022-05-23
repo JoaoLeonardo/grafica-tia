@@ -11,6 +11,7 @@ import com.gdx.tia.controller.AgentController;
 import com.gdx.tia.controller.BulletController;
 import com.gdx.tia.enums.Direction;
 import com.gdx.tia.screens.GameScreen;
+import com.gdx.tia.screens.MainMenuScreen;
 
 public class AgentProcessor implements InputProcessor {
 
@@ -55,7 +56,8 @@ public class AgentProcessor implements InputProcessor {
             case Input.Keys.A: movementDirection.x = -1; break; // LEFT
             case Input.Keys.S: movementDirection.y = -1; break; // DOWN
             case Input.Keys.D: movementDirection.x = 1; break; // RIGHT
-            case Input.Keys.Q: AgentController.ref.getAgent().tradeScore(); // Ação especial
+            case Input.Keys.Q: AgentController.ref.getAgent().tradeScore(); break; // Ação especial
+            case Input.Keys.ESCAPE: AgentController.ref.getAgent().kill(); break; // Menu
             default:
                 this.position.add(Direction.HALT.displacementVector);
                 break; // NONE
