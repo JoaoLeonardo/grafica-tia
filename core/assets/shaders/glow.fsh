@@ -12,7 +12,9 @@ bool isSource(vec4 frag_color) {
 }
 
 float fragAlpha(vec2 fragCoord, vec2 sourceCoord) {
-    float distance = distance(gl_FragCoord, sourceCoord);
+    float dx = pow(sourceCoord.x - fragCoord.x, 2);
+    float dy = pow(sourceCoord.y - fragCoord.y, 2);
+    float distance = sqrt(dx + dy);
     return distance <= 8 ? 1.0 - distance/10 : 0.0;
 }
 
@@ -22,8 +24,8 @@ void main() {
     if (isSource(frag_color)) {
         gl_FragColor = frag_color;
     } else {
-        vec4 frag_color = u_glowColor;
-        frag_color.a = fragAlpha(gl_FragCoord, u_glowSource);
-        gl_FragColor = frag_color;
+        vec4 effect_color = u_glowColor;
+        effect_color.a = fragAlpha(gl_FragCoord, u_glowSource);
+        gl_FragColor = effect_color;
     }
 }
