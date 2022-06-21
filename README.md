@@ -1,3 +1,5 @@
+Move along any mentions of future updates. Currently, this is a work in progress.
+
 # Tactical Infiltration Action
 Simple top-down wave based shooter, envisioned as a stealth game, however, due to both budget and time constraints the guards have already spotted you (tbf they're orange due to following a strict carrot-based diet, which is 100% the lore reasoning behind their inhuman eyesight), so good luck surviving it. Originaly intended only as an university project, but I might still add/update a few things, no promises tho.
 
