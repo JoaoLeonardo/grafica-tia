@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.gdx.tia.element.Agent;
+import com.gdx.tia.element.World;
 import com.gdx.tia.enums.Direction;
 import com.gdx.tia.processor.AgentProcessor;
 
@@ -30,9 +31,15 @@ public class AgentController implements ActionController {
     public void drawElements(Batch batch) {
         // atualiza a posição do agente
         agentProcessor.update();
+
         // desenha o frame do agente
-        if (!agent.hasBeenHit) agent.sprite.draw(batch);
-        else agent.hasBeenHit = false;
+        if (!agent.hasBeenHit) {
+            World.currentStage.registerAsShadowCaster(agent.sprite);
+            agent.sprite.draw(batch);
+        } else {
+            agent.hasBeenHit = false;
+        }
+
         // evoca a fala (nem sempre é exibida)
         agent.speak(batch, agentProcessor.position);
     }

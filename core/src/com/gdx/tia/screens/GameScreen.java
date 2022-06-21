@@ -19,7 +19,7 @@ import com.gdx.tia.TacticalInfiltrationAction;
 import com.gdx.tia.element.Stage;
 import com.gdx.tia.element.World;
 import com.gdx.tia.enums.Direction;
-import com.gdx.tia.shaders.ShaderResource;
+import com.gdx.tia.effects.ShaderResource;
 
 public class GameScreen implements Screen {
 
