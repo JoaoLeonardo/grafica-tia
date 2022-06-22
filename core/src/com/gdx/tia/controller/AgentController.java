@@ -34,8 +34,8 @@ public class AgentController implements ActionController {
 
         // desenha o frame do agente
         if (!agent.hasBeenHit) {
-            World.currentStage.registerAsShadowCaster(agent.sprite);
             agent.sprite.draw(batch);
+            World.currentStage.registerAsShadowCaster(agent.sprite);
         } else {
             agent.hasBeenHit = false;
         }

@@ -1,53 +1,55 @@
 package com.gdx.tia.effects;
 
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.GL30;
+import com.badlogic.gdx.graphics.GLTexture;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.gdx.tia.element.World;
 import com.gdx.tia.screens.GameScreen;
 
 public class PostProcessingResource {
 
-    private SpriteBatch postProcBatch;
+    private SpriteBatch postBatch;
+
+    private FrameBuffer shadowMapFBO;
 
     public PostProcessingResource() {
-        postProcBatch = new SpriteBatch();
+        postBatch = new SpriteBatch();
+        shadowMapFBO = getNewFBO();
     }
 
-    public void apply(Batch batch) {
-        postProcBatch = (SpriteBatch) batch;
-        applyShadows();
+    public void apply(Batch mainBatch) {
+        postBatch.setProjectionMatrix(GameScreen.ref.getCamera().combined);
+
+        // aplica o efeito de sombras para todos os casters do World
+        FrameBuffer shadowsFBO = this.mapShadows();
+        mainBatch.draw(shadowsFBO.getColorBufferTexture(), -1, 1, 2, -2);
+        shadowsFBO.dispose();
     }
 
-    private void applyShadows() {
-        Texture texture = new Texture("textures/black.png");
-        /*FrameBuffer shadowsFB = new FrameBuffer(
-                Pixmap.Format.RGBA8888,
-                (int) GameScreen.ref.getCamera().viewportWidth,
-                (int) GameScreen.ref.getCamera().viewportHeight,
-                false
-        );*/
-
+    private FrameBuffer mapShadows() {
         ShaderProgram shader = GameScreen.ref.getShaderResource().getShadowShader();
+        shader.setUniformMatrix("u_projTrans", GameScreen.ref.getCamera().combined);
 
-        //shadowsFB.begin();
+        shadowMapFBO.begin();
+        postBatch.begin();
 
-        postProcBatch.setShader(shader);
-        for (Sprite caster : World.currentStage.getShadowCasters()) {
-            postProcBatch.draw(texture,
-                    caster.getX() - caster.getWidth() * 1.5f,
-                    caster.getY() - caster.getHeight()/2,
-                    caster.getWidth() * 4,
-                    caster.getHeight() * 2);
-        }
-        postProcBatch.setShader(null);
+        postBatch.setShader(shader);
+        for (Sprite caster : World.currentStage.getShadowCasters()) caster.draw(postBatch);
+        postBatch.setShader(null);
 
-        //shadowsFB.end();
+        postBatch.end();
+        shadowMapFBO.end();
+
+        return shadowMapFBO;
     }
 
-    // passar a fonte de luz para o fragment shader
-    // passar o pixel central do caster
+    private FrameBuffer getNewFBO() {
+        return new FrameBuffer(Pixmap.Format.RGBA8888, 1024, 720, false);
+    }
 
 }
