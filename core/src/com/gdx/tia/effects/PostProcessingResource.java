@@ -1,10 +1,7 @@
 package com.gdx.tia.effects;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL30;
-import com.badlogic.gdx.graphics.GLTexture;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -49,26 +46,32 @@ public class PostProcessingResource {
         ShaderProgram shader = GameScreen.ref.getShaderResource().getShadowMapShader();
 
         shadowMapFBO.begin();
+
+        Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
+        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+
         postBatch.setShader(shader);
         for (Sprite caster : World.currentStage.getShadowCasters()) caster.draw(postBatch);
         postBatch.setShader(null);
-        shadowMapFBO.end();
 
+        shadowMapFBO.end();
         return shadowMapFBO.getColorBufferTexture();
     }
 
     private Texture drawShadows(Texture shadowMap) {
         ShaderProgram shader = GameScreen.ref.getShaderResource().getShadowDrawShader();
-        shadowDrawFBO.begin();
+        shader.setUniformf("u_lightSource", GameScreen.ref.getScreenCenter().x, GameScreen.ref.getScreenCenter().y);
 
         float mx = GameScreen.ref.getCamera().position.x - Gdx.graphics.getWidth() / 2f;
         float my = GameScreen.ref.getCamera().position.y - Gdx.graphics.getHeight() / 2f;
 
+        shadowDrawFBO.begin();
+
         postBatch.setShader(shader);
         postBatch.draw(shadowMap, mx, my, shadowMap.getWidth(), shadowMap.getHeight());
         postBatch.setShader(null);
-        shadowDrawFBO.end();
 
+        shadowDrawFBO.end();
         return shadowDrawFBO.getColorBufferTexture();
     }
 
