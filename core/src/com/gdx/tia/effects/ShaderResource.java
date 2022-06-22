@@ -11,7 +11,8 @@ import java.util.List;
 public class ShaderResource {
 
     private ShaderProgram glowShader;
-    private ShaderProgram shadowShader;
+    private ShaderProgram shadowMapShader;
+    private ShaderProgram shadowDrawShader;
 
     List<ShaderProgram> postProcessShaders;
 
@@ -26,27 +27,32 @@ public class ShaderResource {
                 Gdx.files.local("shaders/glow.vsh"),
                 Gdx.files.local("shaders/glow.fsh")
         );
-        this.shadowShader = new ShaderProgram(
+        this.shadowMapShader = new ShaderProgram(
                 Gdx.files.local("shaders/shadow.vsh"),
-                Gdx.files.local("shaders/shadow.fsh")
+                Gdx.files.local("shaders/shadow-map.fsh")
+        );
+        this.shadowDrawShader = new ShaderProgram(
+                Gdx.files.local("shaders/shadow.vsh"),
+                Gdx.files.local("shaders/shadow-draw.fsh")
         );
 
         this.postProcessShaders = new ArrayList<>();
-        this.postProcessShaders.add(this.shadowShader);
+        this.postProcessShaders.add(this.shadowMapShader);
+        this.postProcessShaders.add(this.shadowDrawShader);
     }
 
     private void setProjection() {
         Matrix4 projection = GameScreen.ref.getCamera().projection;
         this.glowShader.setUniformMatrix("u_projTrans", projection);
-        this.shadowShader.setUniformMatrix("u_projTrans", projection);
+        this.shadowMapShader.setUniformMatrix("u_projTrans", projection);
+        this.shadowDrawShader.setUniformMatrix("u_projTrans", projection);
     }
 
     public ShaderProgram getGlowShader() {
         return glowShader;
     }
-    public ShaderProgram getShadowShader() {
-        return shadowShader;
-    }
+    public ShaderProgram getShadowMapShader() { return shadowMapShader; }
+    public ShaderProgram getShadowDrawShader() { return shadowDrawShader; }
 
     public List<ShaderProgram> getPostProcessShaders() { return postProcessShaders; }
 
