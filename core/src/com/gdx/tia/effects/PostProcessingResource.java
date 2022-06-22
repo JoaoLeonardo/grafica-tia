@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.gdx.tia.element.World;
 import com.gdx.tia.screens.GameScreen;
 
@@ -26,14 +28,12 @@ public class PostProcessingResource {
     public void apply(Batch mainBatch) {
         // ajusta a projeção da batch
         postBatch.setProjectionMatrix(GameScreen.ref.getCamera().combined);
-        postBatch.begin();
 
         // aplica o efeito de sombras para todos os casters do World
         Texture shadows = this.applyShadows();
         mainBatch.draw(shadows, -1, 1, 2, -2);
 
         // limpa os assets utilizados
-        postBatch.end();
         dispose();
     }
 
@@ -47,12 +47,11 @@ public class PostProcessingResource {
 
         shadowMapFBO.begin();
 
-        Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
-        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
-
+        postBatch.begin();
         postBatch.setShader(shader);
         for (Sprite caster : World.currentStage.getShadowCasters()) caster.draw(postBatch);
         postBatch.setShader(null);
+        postBatch.end();
 
         shadowMapFBO.end();
         return shadowMapFBO.getColorBufferTexture();
@@ -60,16 +59,20 @@ public class PostProcessingResource {
 
     private Texture drawShadows(Texture shadowMap) {
         ShaderProgram shader = GameScreen.ref.getShaderResource().getShadowDrawShader();
-        shader.setUniformf("u_lightSource", GameScreen.ref.getScreenCenter().x, GameScreen.ref.getScreenCenter().y);
+
+        Vector3 lightLocation = translateCoord(GameScreen.ref.getLightLocation());
+        shader.setUniformf("u_lightSource", lightLocation.x, lightLocation.y);
 
         float mx = GameScreen.ref.getCamera().position.x - Gdx.graphics.getWidth() / 2f;
         float my = GameScreen.ref.getCamera().position.y - Gdx.graphics.getHeight() / 2f;
 
         shadowDrawFBO.begin();
 
+        postBatch.begin();
         postBatch.setShader(shader);
         postBatch.draw(shadowMap, mx, my, shadowMap.getWidth(), shadowMap.getHeight());
         postBatch.setShader(null);
+        postBatch.end();
 
         shadowDrawFBO.end();
         return shadowDrawFBO.getColorBufferTexture();
@@ -77,6 +80,10 @@ public class PostProcessingResource {
 
     private FrameBuffer getNewFBO() {
         return new FrameBuffer(Pixmap.Format.RGBA8888, 1024, 720, false);
+    }
+
+    private Vector3 translateCoord(Vector2 position) {
+        return GameScreen.ref.getCamera().project(new Vector3(position.x, position.y, 0));
     }
 
     private void dispose() {

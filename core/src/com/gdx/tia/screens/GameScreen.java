@@ -165,4 +165,7 @@ public class GameScreen implements Screen {
     public Vector2 getMouseInterval() { return mDirInterval; }
 
     public ShaderResource getShaderResource() { return this.shaderResource; }
+
+    public Vector2 getLightLocation() { return new Vector2(playerSpawn.getRectangle().x, playerSpawn.getRectangle().y); }
+
 }
