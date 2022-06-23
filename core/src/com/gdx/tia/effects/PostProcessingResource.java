@@ -72,16 +72,17 @@ public class PostProcessingResource {
     }
 
     private Texture mapShadows(TextureRegion occlusionMap) {
-        occlusionMap.flip(false, true);
-
         ShaderProgram shader = GameScreen.ref.getShaderResource().getShadowMapShader();
+        occlusionMap.flip(false, true);
 
         shadowMapFBO.begin();
 
         postBatch.begin();
+        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glClearColor(0f,0f,0f,0f);
         postBatch.setShader(shader);
         shader.setUniformf("u_resolution", resolution.x, resolution.y);
-        postBatch.draw(occlusionMap, center.x, center.y, resolution.x, resolution.y);
+        postBatch.draw(occlusionMap, center.x, center.y, occlusionMap.getRegionWidth(), occlusionMap.getRegionHeight());
         postBatch.setShader(null);
         postBatch.end();
 
@@ -97,8 +98,8 @@ public class PostProcessingResource {
 
         postBatch.begin();
         postBatch.setShader(shader);
-        shader.setUniformf("u_resolution", 1024, 720);
-        postBatch.draw(shadowMap, center.x, center.y, shadowMap.getWidth(), shadowMap.getHeight());
+        shader.setUniformf("u_resolution", resolution.x, resolution.y);
+        postBatch.draw(shadowMap,  center.x, center.y, shadowMap.getWidth(), shadowMap.getHeight());
         postBatch.setShader(null);
         postBatch.end();
 
@@ -119,7 +120,8 @@ public class PostProcessingResource {
     }
 
     private void renderDispose() {
-        shadowMapFBO.dispose();
+        //occlusionFBO.dispose();
+        //shadowMapFBO.dispose();
         shadowDrawFBO.dispose();
     }
 

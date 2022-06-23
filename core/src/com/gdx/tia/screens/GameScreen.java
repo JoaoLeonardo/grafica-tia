@@ -68,7 +68,7 @@ public class GameScreen implements Screen {
         gameWorld.create();
 
         theme = TacticalInfiltrationAction.assetManager.get("effects/stage-music.ogg");
-        playTheme();
+        //playTheme();
     }
 
     @Override
