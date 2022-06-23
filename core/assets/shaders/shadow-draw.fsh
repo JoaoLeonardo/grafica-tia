@@ -21,10 +21,9 @@ float fragAlpha(vec2 fragCoord, vec2 sourceCoord) {
 
 void main() {
     vec4 frag_color = texture2D(u_sampler2D, v_texCoord0);
-    if (isOcclusion(frag_color)) {
-        gl_FragColor = vec4(255, 0, 0, 1);
+    if (frag_color.r == 255) {
+        gl_FragColor = vec4(0, 0, 0, 0);
     } else {
-        frag_color.a = fragAlpha(gl_FragCoord, u_lightSource);
         gl_FragColor = frag_color;
     }
 }

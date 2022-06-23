@@ -16,13 +16,18 @@ public class PostProcessingResource {
 
     private SpriteBatch postBatch;
 
+    private OrthographicCamera postCamera;
+
+    private FrameBuffer occlusionFBO;
     private FrameBuffer shadowMapFBO;
     private FrameBuffer shadowDrawFBO;
 
     public PostProcessingResource() {
         postBatch = new SpriteBatch();
+        //postCamera = new OrthographicCamera();
         shadowMapFBO = getNewFBO();
         shadowDrawFBO = getNewFBO();
+        occlusionFBO = getNewFBO();
     }
 
     public void apply(Batch mainBatch) {
@@ -38,17 +43,40 @@ public class PostProcessingResource {
     }
 
     private Texture applyShadows() {
-        Texture shadowMap = mapShadows();
-        return drawShadows(shadowMap);
+        Texture occlusionMap = mapOcclusion();
+        Texture shadowMap = mapShadows(occlusionMap);
+        return shadowMap;
+        //return drawShadows(shadowMap);
     }
 
-    private Texture mapShadows() {
-        ShaderProgram shader = GameScreen.ref.getShaderResource().getShadowMapShader();
-
-        shadowMapFBO.begin();
+    private Texture mapOcclusion() {
+        occlusionFBO.begin();
 
         postBatch.begin();
         for (Sprite caster : World.currentStage.getShadowCasters()) caster.draw(postBatch);
+        postBatch.end();
+
+        occlusionFBO.end();
+        return occlusionFBO.getColorBufferTexture();
+    }
+
+    private Texture mapShadows(Texture occlusionMap) {
+        ShaderProgram shader = GameScreen.ref.getShaderResource().getShadowMapShader();
+        if (!shader.isCompiled()) System.out.println(shader.getLog());
+
+        shadowMapFBO.begin();
+
+        Gdx.gl.glClearColor(255f,255f,255f,1.0f);
+        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+
+        float mx = GameScreen.ref.getCamera().position.x - Gdx.graphics.getWidth() / 2f;
+        float my = GameScreen.ref.getCamera().position.y - Gdx.graphics.getHeight() / 2f;
+
+        postBatch.begin();
+        postBatch.setShader(shader);
+        shader.setUniformf("u_resolution", occlusionMap.getWidth(), occlusionMap.getHeight());
+        postBatch.draw(occlusionMap, mx, my, occlusionMap.getWidth(), occlusionMap.getHeight());
+        postBatch.setShader(null);
         postBatch.end();
 
         shadowMapFBO.end();
@@ -57,6 +85,7 @@ public class PostProcessingResource {
 
     private Texture drawShadows(Texture shadowMap) {
         ShaderProgram shader = GameScreen.ref.getShaderResource().getShadowDrawShader();
+        if (!shader.isCompiled()) System.out.println(shader.getLog());
 
         Vector3 lightLocation = translateCoord(GameScreen.ref.getLightLocation());
 
@@ -67,7 +96,7 @@ public class PostProcessingResource {
 
         postBatch.begin();
         postBatch.setShader(shader);
-        shader.setUniformf("u_lightSource", lightLocation.x, lightLocation.y);
+        shader.setUniformf("u_resolution", 1024, 720);
         postBatch.draw(shadowMap, mx, my, shadowMap.getWidth(), shadowMap.getHeight());
         postBatch.setShader(null);
         postBatch.end();
