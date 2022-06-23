@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
@@ -16,7 +17,8 @@ public class PostProcessingResource {
 
     private SpriteBatch postBatch;
 
-    private OrthographicCamera postCamera;
+    private Vector2 resolution;
+    private Vector2 center;
 
     private FrameBuffer occlusionFBO;
     private FrameBuffer shadowMapFBO;
@@ -24,58 +26,62 @@ public class PostProcessingResource {
 
     public PostProcessingResource() {
         postBatch = new SpriteBatch();
-        //postCamera = new OrthographicCamera();
-        shadowMapFBO = getNewFBO();
-        shadowDrawFBO = getNewFBO();
-        occlusionFBO = getNewFBO();
+        resolution = new Vector2();
+        center = new Vector2();
+        resize();
     }
 
     public void apply(Batch mainBatch) {
         // ajusta a projeção da batch
         postBatch.setProjectionMatrix(GameScreen.ref.getCamera().combined);
 
+        // recalcula o centro da tela
+        calculateCenter();
+
         // aplica o efeito de sombras para todos os casters do World
         Texture shadows = this.applyShadows();
         mainBatch.draw(shadows, -1, 1, 2, -2);
 
-        // limpa os assets utilizados
-        dispose();
+        // limpa os assets utilizados nesse loop
+        renderDispose();
+    }
+
+    private void calculateCenter() {
+        Vector3 cameraPosition = GameScreen.ref.getCamera().position;
+        center.x = (cameraPosition.x != 0 ? cameraPosition.x: resolution.x) - resolution.x / 2f;
+        center.y = (cameraPosition.x != 0 ? cameraPosition.y: resolution.y) - resolution.y / 2f;
     }
 
     private Texture applyShadows() {
-        Texture occlusionMap = mapOcclusion();
+        TextureRegion occlusionMap = mapOcclusion();
         Texture shadowMap = mapShadows(occlusionMap);
-        return shadowMap;
-        //return drawShadows(shadowMap);
+        return drawShadows(shadowMap);
     }
 
-    private Texture mapOcclusion() {
+    private TextureRegion mapOcclusion() {
         occlusionFBO.begin();
 
         postBatch.begin();
+        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glClearColor(0f,0f,0f,0f);
         for (Sprite caster : World.currentStage.getShadowCasters()) caster.draw(postBatch);
         postBatch.end();
 
         occlusionFBO.end();
-        return occlusionFBO.getColorBufferTexture();
+        return new TextureRegion(occlusionFBO.getColorBufferTexture());
     }
 
-    private Texture mapShadows(Texture occlusionMap) {
+    private Texture mapShadows(TextureRegion occlusionMap) {
+        occlusionMap.flip(false, true);
+
         ShaderProgram shader = GameScreen.ref.getShaderResource().getShadowMapShader();
-        if (!shader.isCompiled()) System.out.println(shader.getLog());
 
         shadowMapFBO.begin();
 
-        Gdx.gl.glClearColor(255f,255f,255f,1.0f);
-        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
-
-        float mx = GameScreen.ref.getCamera().position.x - Gdx.graphics.getWidth() / 2f;
-        float my = GameScreen.ref.getCamera().position.y - Gdx.graphics.getHeight() / 2f;
-
         postBatch.begin();
         postBatch.setShader(shader);
-        shader.setUniformf("u_resolution", occlusionMap.getWidth(), occlusionMap.getHeight());
-        postBatch.draw(occlusionMap, mx, my, occlusionMap.getWidth(), occlusionMap.getHeight());
+        shader.setUniformf("u_resolution", resolution.x, resolution.y);
+        postBatch.draw(occlusionMap, center.x, center.y, resolution.x, resolution.y);
         postBatch.setShader(null);
         postBatch.end();
 
@@ -87,17 +93,12 @@ public class PostProcessingResource {
         ShaderProgram shader = GameScreen.ref.getShaderResource().getShadowDrawShader();
         if (!shader.isCompiled()) System.out.println(shader.getLog());
 
-        Vector3 lightLocation = translateCoord(GameScreen.ref.getLightLocation());
-
         shadowDrawFBO.begin();
-
-        float mx = GameScreen.ref.getCamera().position.x - Gdx.graphics.getWidth() / 2f;
-        float my = GameScreen.ref.getCamera().position.y - Gdx.graphics.getHeight() / 2f;
 
         postBatch.begin();
         postBatch.setShader(shader);
         shader.setUniformf("u_resolution", 1024, 720);
-        postBatch.draw(shadowMap, mx, my, shadowMap.getWidth(), shadowMap.getHeight());
+        postBatch.draw(shadowMap, center.x, center.y, shadowMap.getWidth(), shadowMap.getHeight());
         postBatch.setShader(null);
         postBatch.end();
 
@@ -105,15 +106,26 @@ public class PostProcessingResource {
         return shadowDrawFBO.getColorBufferTexture();
     }
 
+    public void resize() {
+        resolution.x = Gdx.graphics.getWidth() != 0 ? Gdx.graphics.getWidth() : 1024;
+        resolution.y = Gdx.graphics.getHeight() != 0 ? Gdx.graphics.getHeight() : 720;
+        shadowMapFBO = getNewFBO();
+        shadowDrawFBO = getNewFBO();
+        occlusionFBO = getNewFBO();
+    }
+
     private FrameBuffer getNewFBO() {
-        return new FrameBuffer(Pixmap.Format.RGBA8888, 1024, 720, false);
+        return new FrameBuffer(Pixmap.Format.RGBA8888, (int) resolution.x, (int) resolution.y, false);
     }
 
-    private Vector3 translateCoord(Vector2 position) {
-        return GameScreen.ref.getCamera().project(new Vector3(position.x, position.y, 0));
+    private void renderDispose() {
+        shadowMapFBO.dispose();
+        shadowDrawFBO.dispose();
     }
 
-    private void dispose() {
+    public void dispose() {
+        postBatch.dispose();
+        occlusionFBO.dispose();
         shadowMapFBO.dispose();
         shadowDrawFBO.dispose();
     }

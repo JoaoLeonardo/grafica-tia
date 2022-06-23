@@ -55,7 +55,9 @@ public abstract class World implements ApplicationListener {
     abstract boolean hasCollidedWithAliveEntity(Bullet bullet);
 
     @Override
-    public void resize(int width, int height) { }
+    public void resize(int width, int height) {
+        this.postProcessingResource.resize();
+    }
 
     @Override
     public void pause() { }
@@ -79,4 +81,8 @@ public abstract class World implements ApplicationListener {
 
     public void registerAsShadowCaster(Sprite caster) { shadowCasters.add(caster); }
 
+    @Override
+    public void dispose() {
+        this.postProcessingResource.dispose();
+    }
 }

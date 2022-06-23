@@ -95,6 +95,7 @@ public class GameScreen implements Screen {
         camera.viewportHeight = height;
         camera.update();
         updateInterval();
+        gameWorld.resize(width, height);
     }
 
     @Override
@@ -136,7 +137,6 @@ public class GameScreen implements Screen {
         }
         return false;
     }
-
 
     public void updateInterval() {
         // intervalo do mouse entre uma direção e outra = L / Nd * 2
