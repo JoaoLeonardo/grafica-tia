@@ -16,7 +16,7 @@ bool isOcclusion(vec4 color) {
 
 float fragAlpha(vec2 fragCoord, vec2 sourceCoord) {
     float distance = distance(fragCoord, sourceCoord);
-    return distance > 200 ? distance * 0.001 : 0.0;
+    return distance > 10 ? distance * 0.001 : 0.0;
 }
 
 void main() {

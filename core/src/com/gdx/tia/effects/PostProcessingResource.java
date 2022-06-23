@@ -48,9 +48,7 @@ public class PostProcessingResource {
         shadowMapFBO.begin();
 
         postBatch.begin();
-        postBatch.setShader(shader);
         for (Sprite caster : World.currentStage.getShadowCasters()) caster.draw(postBatch);
-        postBatch.setShader(null);
         postBatch.end();
 
         shadowMapFBO.end();
@@ -61,7 +59,6 @@ public class PostProcessingResource {
         ShaderProgram shader = GameScreen.ref.getShaderResource().getShadowDrawShader();
 
         Vector3 lightLocation = translateCoord(GameScreen.ref.getLightLocation());
-        shader.setUniformf("u_lightSource", lightLocation.x, lightLocation.y);
 
         shadowDrawFBO.begin();
 
@@ -70,6 +67,7 @@ public class PostProcessingResource {
 
         postBatch.begin();
         postBatch.setShader(shader);
+        shader.setUniformf("u_lightSource", lightLocation.x, lightLocation.y);
         postBatch.draw(shadowMap, mx, my, shadowMap.getWidth(), shadowMap.getHeight());
         postBatch.setShader(null);
         postBatch.end();

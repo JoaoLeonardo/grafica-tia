@@ -162,7 +162,7 @@
   <object id="90" x="1341.5" y="409.5" width="165" height="98.5"/>
  </objectgroup>
  <objectgroup id="5" name="spawn">
-  <object id="35" x="1024" y="1087" width="32" height="31"/>
+  <object id="35" x="1042.18" y="1038.52" width="32" height="31"/>
  </objectgroup>
  <objectgroup id="6" name="mob-spawn">
   <object id="52" x="1681.33" y="560"/>
