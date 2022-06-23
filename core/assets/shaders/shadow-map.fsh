@@ -8,23 +8,17 @@ uniform sampler2D u_sampler2D;
 uniform vec2 u_resolution; // resolução da textura
 
 void main() {
-    vec4 frag_color = texture2D(u_sampler2D, v_texCoord0);
+    float dst = 1.0;
 
-    for (float i = 0.0; i<= MAX_RANGE; i++) {
-        vec2 n_coord = vec2(v_texCoord0.x, v_texCoord0.y + i);
+    for (float y=0.0; y<u_resolution.y; y+=1.0) {
+        float d = y/u_resolution.y;
+        vec2 coord = vec2(v_texCoord0.x, dst);
+        vec4 data = texture2D(u_sampler2D, coord);
 
-        if (n_coord.y > u_resolution.y) {
-            gl_FragColor = frag_color;
-            return;
-        }
-
-        vec4 n_color = texture2D(u_sampler2D, n_coord);
-
-        if (n_color.a > 0.75) {
-            gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
-            return;
+        if (data.r > 0.0) {
+            dst = min(dst, d);
         }
     }
 
-    gl_FragColor = frag_color;
+    gl_FragColor = vec4(dst);
 }
