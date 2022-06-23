@@ -63,10 +63,10 @@ public class PostProcessingResource {
         Vector3 lightLocation = translateCoord(GameScreen.ref.getLightLocation());
         shader.setUniformf("u_lightSource", lightLocation.x, lightLocation.y);
 
+        shadowDrawFBO.begin();
+
         float mx = GameScreen.ref.getCamera().position.x - Gdx.graphics.getWidth() / 2f;
         float my = GameScreen.ref.getCamera().position.y - Gdx.graphics.getHeight() / 2f;
-
-        shadowDrawFBO.begin();
 
         postBatch.begin();
         postBatch.setShader(shader);
