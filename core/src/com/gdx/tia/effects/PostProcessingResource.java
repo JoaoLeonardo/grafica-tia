@@ -55,37 +55,35 @@ public class PostProcessingResource {
     private Texture applyShadows() {
         TextureRegion occlusionMap = mapOcclusion();
         Texture shadowMap = mapShadows(occlusionMap);
-        return drawShadows(shadowMap);
+        return shadowMap;//drawShadows(shadowMap);
     }
 
     private TextureRegion mapOcclusion() {
         occlusionFBO.begin();
-
         postBatch.begin();
+
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
         Gdx.gl.glClearColor(0f,0f,0f,0f);
-        for (Sprite caster : World.currentStage.getShadowCasters()) caster.draw(postBatch);
-        postBatch.end();
 
+        for (Sprite caster : World.currentStage.getShadowCasters()) caster.draw(postBatch);
+
+        postBatch.end();
         occlusionFBO.end();
         return new TextureRegion(occlusionFBO.getColorBufferTexture());
     }
 
     private Texture mapShadows(TextureRegion occlusionMap) {
         ShaderProgram shader = GameScreen.ref.getShaderResource().getShadowMapShader();
-        occlusionMap.flip(false, true);
 
         shadowMapFBO.begin();
-
         postBatch.begin();
-        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
-        Gdx.gl.glClearColor(0f,0f,0f,0f);
+
         postBatch.setShader(shader);
         shader.setUniformf("u_resolution", resolution.x, resolution.y);
         postBatch.draw(occlusionMap, center.x, center.y, occlusionMap.getRegionWidth(), occlusionMap.getRegionHeight());
         postBatch.setShader(null);
-        postBatch.end();
 
+        postBatch.end();
         shadowMapFBO.end();
         return shadowMapFBO.getColorBufferTexture();
     }
@@ -95,14 +93,14 @@ public class PostProcessingResource {
         if (!shader.isCompiled()) System.out.println(shader.getLog());
 
         shadowDrawFBO.begin();
-
         postBatch.begin();
+
         postBatch.setShader(shader);
         shader.setUniformf("u_resolution", resolution.x, resolution.y);
         postBatch.draw(shadowMap,  center.x, center.y, shadowMap.getWidth(), shadowMap.getHeight());
         postBatch.setShader(null);
-        postBatch.end();
 
+        postBatch.end();
         shadowDrawFBO.end();
         return shadowDrawFBO.getColorBufferTexture();
     }
@@ -121,7 +119,7 @@ public class PostProcessingResource {
 
     private void renderDispose() {
         //occlusionFBO.dispose();
-        //shadowMapFBO.dispose();
+        shadowMapFBO.dispose();
         shadowDrawFBO.dispose();
     }
 

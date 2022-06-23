@@ -10,8 +10,8 @@ uniform vec2 u_resolution; // resolução da textura
 void main() {
     vec4 frag_color = texture2D(u_sampler2D, v_texCoord0);
 
-    for (float i = 0.0; i<= MAX_RANGE; i++) {
-        vec2 n_coord = vec2(v_texCoord0.x, v_texCoord0.y + i);
+    for (float i = 1.0; i<= MAX_RANGE; i++) {
+        vec2 n_coord = vec2(v_texCoord0.x + 1, v_texCoord0.y);
 
         if (n_coord.y > u_resolution.y) {
             gl_FragColor = frag_color;
