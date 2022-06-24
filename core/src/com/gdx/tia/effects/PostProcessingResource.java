@@ -71,7 +71,7 @@ public class PostProcessingResource {
 
         postCamera.setToOrtho(false, occlusionFBO.getWidth(), occlusionFBO.getHeight());
 
-        postCamera.translate(center.x - 256/2f, center.y - 256/2f);
+        postCamera.translate(center.x-256/2f, center.y-256/2f);
 
         postCamera.update();
 
@@ -125,8 +125,8 @@ public class PostProcessingResource {
         postBatch.setShader(shader);
         postBatch.begin();
         shader.setUniformf("u_resolution", 256, 256);
-        postBatch.setColor(Color.RED);
-        postBatch.draw(shadowMap, center.x-256/2f, center.y-256/2f, 256, 256);
+        postBatch.setColor(Color.BLACK);
+        postBatch.draw(shadowMap, center.x-256/2, center.y-390, 256, 256);
         postBatch.end();
 
         postBatch.setColor(Color.WHITE);
