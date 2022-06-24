@@ -20,7 +20,7 @@ public class EnemyController implements ActionController {
     public TextureAtlas enemyAtlas;
     public Sound gunshotSound;
 
-    private final int MAX_WAVE_LENGTH = 0;
+    private final int MAX_WAVE_LENGTH = 8;
 
     private final ArrayList<Enemy> activeEnemies = new ArrayList<>();
     private Pool<Enemy> enemyPool;

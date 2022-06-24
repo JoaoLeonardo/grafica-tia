@@ -31,13 +31,14 @@ public class ShadowsResource implements EffectResource {
     public Texture renderShadows(SpriteBatch batch, Vector2 resolution, Vector2 center) {
         TextureRegion occlusionMap = mapOcclusion(batch);
         occlusionMap.flip(false, true);
-        Texture shadowMap = mapShadows(occlusionMap, batch, resolution, center);
 
+        Texture shadowMap = mapShadows(occlusionMap, batch, resolution, center);
         shadowMap.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         shadowMap.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
 
         Texture shadowsFBOTex = drawShadows(shadowMap, batch, resolution, center);
         shadowDrawFBO.dispose();
+
         return shadowsFBOTex;
     }
 

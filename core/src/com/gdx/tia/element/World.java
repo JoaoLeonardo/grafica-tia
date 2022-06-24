@@ -40,7 +40,8 @@ public abstract class World implements ApplicationListener {
     @Override
     public void render() {
         for (ActionController actionController : actionControllerList) actionController.drawElements(batch);
-        gameScreen.getCamera().position.set(getPlayerPosition(), 0);
+        gameScreen.getCamera().position.x = getPlayerPosition().x;
+        gameScreen.getCamera().position.y = getPlayerPosition().y;
         gameScreen.getCamera().update();
     }
 

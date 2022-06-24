@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
+import com.gdx.tia.TacticalInfiltrationAction;
 import com.gdx.tia.controller.BulletController;
 import com.gdx.tia.controller.EnemyController;
 import com.gdx.tia.enums.Direction;
@@ -36,17 +37,19 @@ public class Enemy extends AliveEntity implements Pool.Poolable {
     private ParticleEffect particleEffect;
     public float particleTimer;
 
+    private int scKey;
+
     public Enemy() {
         particleEffect = new ParticleEffect();
         particleEffect.load(Gdx.files.local("effects/enemy-hit.p"), Gdx.files.local("effects"));
         particleEffect.start();
         random = new Random();
-
         reset();
     }
 
     public void init(float initialX, float initialY) {
         sprite = EnemyController.ref.enemyAtlas.createSprite(Direction.HALT.name());
+        //scKey = TacticalInfiltrationAction.ref.getShadowsResource().registerAsCaster(sprite);
         position = new Vector2(initialX + 50, initialY);
         gunTimerMax = random.nextFloat() + 0.5f;
         gunTimer = 0;
@@ -77,6 +80,8 @@ public class Enemy extends AliveEntity implements Pool.Poolable {
             // desvia do objeto
             dodgeObject();
         }
+
+        //TacticalInfiltrationAction.ref.getShadowsResource().updateCaster(scKey, sprite);
     }
 
     public void moveToTarget(Direction direction) {
@@ -155,6 +160,7 @@ public class Enemy extends AliveEntity implements Pool.Poolable {
 
     public void dispose() {
         particleEffect.dispose();
+        //TacticalInfiltrationAction.ref.getShadowsResource().removeCaster(scKey);
     }
 
 }
