@@ -90,10 +90,13 @@ public class GameScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         screenCenter = new Vector2((float) width / 2, (float) height / 2);
+
         camera.viewportWidth = width;
         camera.viewportHeight = height;
+
         camera.update();
         updateInterval();
+
         gameWorld.resize(width, height);
     }
 

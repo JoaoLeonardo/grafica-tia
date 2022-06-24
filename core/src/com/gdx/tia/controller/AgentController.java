@@ -3,6 +3,7 @@ package com.gdx.tia.controller;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.gdx.tia.TacticalInfiltrationAction;
 import com.gdx.tia.element.Agent;
 import com.gdx.tia.element.World;
 import com.gdx.tia.enums.Direction;
@@ -15,6 +16,8 @@ public class AgentController implements ActionController {
     private AgentProcessor agentProcessor;
     private Agent agent;
 
+    private int scKey;
+
     public AgentController() {
         agent = new Agent();
         ref = this;
@@ -25,6 +28,7 @@ public class AgentController implements ActionController {
         agentProcessor = new AgentProcessor(this);
         Gdx.input.setInputProcessor(agentProcessor);
         setAgentSprite(Direction.RIGHT.name());
+        scKey = TacticalInfiltrationAction.ref.getShadowsResource().registerAsCaster(agent.sprite);
     }
 
     @Override
@@ -35,7 +39,7 @@ public class AgentController implements ActionController {
         // desenha o frame do agente
         if (!agent.hasBeenHit) {
             agent.sprite.draw(batch);
-            World.currentStage.registerAsShadowCaster(agent.sprite);
+            TacticalInfiltrationAction.ref.getShadowsResource().updateCaster(scKey, agent.sprite);
         } else {
             agent.hasBeenHit = false;
         }
@@ -48,11 +52,10 @@ public class AgentController implements ActionController {
 
     public Sprite getAgentSprite() { return agent.sprite; }
 
-    public void setAgentSprite(String region) {
-        agent.setSprite(region, agentProcessor.position);
-    }
+    public void setAgentSprite(String region) { agent.setSprite(region, agentProcessor.position); }
 
     public void dispose() {
+        TacticalInfiltrationAction.ref.getShadowsResource().removeCaster(scKey);
         agent.dispose();
     }
 
