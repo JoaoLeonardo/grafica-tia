@@ -1,5 +1,3 @@
-#define MAX_RANGE 30
-
 varying vec4 v_color;
 varying vec2 v_texCoord0;
 
@@ -10,21 +8,22 @@ uniform vec2 u_resolution; // resolução da textura
 void main() {
     vec4 frag_color = texture2D(u_sampler2D, v_texCoord0);
 
-    for (float i = 1.0; i<= MAX_RANGE; i++) {
-        vec2 n_coord = vec2(v_texCoord0.x + 1, v_texCoord0.y);
+    vec2 onePixel = vec2(1.0, 1.0) / u_resolution;
 
-        if (n_coord.y > u_resolution.y) {
-            gl_FragColor = frag_color;
-            return;
-        }
+    frag_color = (
+        texture2D(u_sampler2D, v_texCoord0) +
+        texture2D(u_sampler2D, v_texCoord0 + vec2(onePixel.x, 0.0)) +
+        texture2D(u_sampler2D, v_texCoord0 + vec2(-onePixel.x, 0.0))
+    ) / 3.0;
 
-        vec4 n_color = texture2D(u_sampler2D, n_coord);
+    // TODO: Gradiente (de acordo com os 4 vizinhos??)
 
-        if (n_color.a > 0.75) {
-            gl_FragColor = vec4(255.0, 0.0, 0.0, 1.0);
-            return;
-        }
+    if (frag_color.a >= 0.75) {
+        frag_color.a = 0.5;
     }
 
     gl_FragColor = frag_color;
 }
+
+// https://thebookofshaders.com/edit.php?log=180419042235
+// https://stackoverflow.com/questions/9779415/how-to-get-pixel-information-inside-a-fragment-shader

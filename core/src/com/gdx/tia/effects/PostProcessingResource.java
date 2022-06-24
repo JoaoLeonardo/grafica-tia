@@ -48,14 +48,19 @@ public class PostProcessingResource {
 
     private void calculateCenter() {
         Vector3 cameraPosition = GameScreen.ref.getCamera().position;
-        center.x = (cameraPosition.x != 0 ? cameraPosition.x: resolution.x) - resolution.x / 2f;
-        center.y = (cameraPosition.x != 0 ? cameraPosition.y: resolution.y) - resolution.y / 2f;
+        center.x = (cameraPosition.x != 0 ? cameraPosition.x : resolution.x) - resolution.x / 2f;
+        center.y = (cameraPosition.x != 0 ? cameraPosition.y : resolution.y) - resolution.y / 2f;
     }
 
     private Texture applyShadows() {
         TextureRegion occlusionMap = mapOcclusion();
+        occlusionMap.flip(false, true);
         Texture shadowMap = mapShadows(occlusionMap);
-        return shadowMap;//drawShadows(shadowMap);
+
+        shadowMap.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        shadowMap.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+
+        return drawShadows(shadowMap);
     }
 
     private TextureRegion mapOcclusion() {
@@ -74,9 +79,13 @@ public class PostProcessingResource {
 
     private Texture mapShadows(TextureRegion occlusionMap) {
         ShaderProgram shader = GameScreen.ref.getShaderResource().getShadowMapShader();
+        if (!shader.isCompiled()) System.out.println(shader.getLog());
 
         shadowMapFBO.begin();
         postBatch.begin();
+
+        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glClearColor(0f,0f,0f,0f);
 
         postBatch.setShader(shader);
         shader.setUniformf("u_resolution", resolution.x, resolution.y);
@@ -85,7 +94,8 @@ public class PostProcessingResource {
 
         postBatch.end();
         shadowMapFBO.end();
-        return shadowMapFBO.getColorBufferTexture();
+
+        return  shadowMapFBO.getColorBufferTexture();
     }
 
     private Texture drawShadows(Texture shadowMap) {
@@ -97,7 +107,7 @@ public class PostProcessingResource {
 
         postBatch.setShader(shader);
         shader.setUniformf("u_resolution", resolution.x, resolution.y);
-        postBatch.draw(shadowMap,  center.x, center.y, shadowMap.getWidth(), shadowMap.getHeight());
+        postBatch.draw(shadowMap,  center.x, center.y, resolution.x, resolution.y);
         postBatch.setShader(null);
 
         postBatch.end();
@@ -119,7 +129,7 @@ public class PostProcessingResource {
 
     private void renderDispose() {
         //occlusionFBO.dispose();
-        shadowMapFBO.dispose();
+        //shadowMapFBO.dispose();
         shadowDrawFBO.dispose();
     }
 

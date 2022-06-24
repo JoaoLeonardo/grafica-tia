@@ -47,8 +47,12 @@ public abstract class World implements ApplicationListener {
     @Override
     public void render() {
         this.shadowCasters = new ArrayList<>();
+
         for (ActionController actionController : actionControllerList) actionController.drawElements(batch);
+
         gameScreen.getCamera().position.set(getPlayerPosition(), 0);
+        gameScreen.getCamera().update();
+
         this.postProcessingResource.apply(batch);
     }
 
