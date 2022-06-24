@@ -1,30 +1,54 @@
-#define MAX_RANGE 30
+#define PI 3.14
 
+//inputs from vertex shader
 varying vec4 v_color;
 varying vec2 v_texCoord0;
 
-uniform sampler2D u_sampler2D;
+//uniform values
+uniform sampler2D u_sample2D;
+uniform vec2 u_resolution;
 
-uniform vec2 u_resolution; // resolução da textura
+//sample from the 1D distance map
+float sampleMap(vec2 coord, float r) {
+    return step(r, texture2D(u_sample2D, coord).r);
+}
 
-void main() {
-    vec4 frag_color = texture2D(u_sampler2D, v_texCoord0);
+void main(void) {
+    //rectangular to polar
+    vec2 norm = v_texCoord0.st * 2.0 - 1.0;
+    float theta = atan(norm.y, norm.x);
+    float r = length(norm);
+    float coord = (theta + PI) / (2.0*PI);
 
-    for (float i = 1.0; i<= MAX_RANGE; i++) {
-        vec2 n_coord = vec2(v_texCoord0.x + 1, v_texCoord0.y);
+    //the tex coord to sample our 1D lookup texture
+    //always 0.0 on y axis
+    vec2 tc = vec2(coord, 0.0);
 
-        if (n_coord.y > u_resolution.y) {
-            gl_FragColor = frag_color;
-            return;
-        }
+    //the center tex coord, which gives us hard shadows
+    float center = sampleMap(tc, r);
 
-        vec4 n_color = texture2D(u_sampler2D, n_coord);
+    //we multiply the blur amount by our distance from center
+    //this leads to more blurriness as the shadow "fades away"
+    float blur = (1./u_resolution.x)  * smoothstep(0., 1., r);
 
-        if (n_color.a > 0.75) {
-            gl_FragColor = vec4(255.0, 0.0, 0.0, 1.0);
-            return;
-        }
-    }
+    //now we use a simple gaussian blur
+    float sum = 0.0;
 
-    gl_FragColor = frag_color;
+    sum += sampleMap(vec2(tc.x - 4.0*blur, tc.y), r) * 0.05;
+    sum += sampleMap(vec2(tc.x - 3.0*blur, tc.y), r) * 0.09;
+    sum += sampleMap(vec2(tc.x - 2.0*blur, tc.y), r) * 0.12;
+    sum += sampleMap(vec2(tc.x - 1.0*blur, tc.y), r) * 0.15;
+
+    sum += center * 0.16;
+
+    sum += sampleMap(vec2(tc.x + 1.0*blur, tc.y), r) * 0.15;
+    sum += sampleMap(vec2(tc.x + 2.0*blur, tc.y), r) * 0.12;
+    sum += sampleMap(vec2(tc.x + 3.0*blur, tc.y), r) * 0.09;
+    sum += sampleMap(vec2(tc.x + 4.0*blur, tc.y), r) * 0.05;
+
+    //sum of 1.0 -> in light, 0.0 -> in shadow
+
+    //multiply the summed amount by our distance, which gives us a radial falloff
+    //then multiply by vertex (light) color
+    gl_FragColor = v_color * vec4(vec3(1.0), sum * smoothstep(1.0, 0.0, r));
 }

@@ -57,8 +57,10 @@ public class PostProcessingResource {
 
     private Texture applyShadows() {
         TextureRegion occlusionMap = mapOcclusion();
-        Texture shadowMap = mapShadows(occlusionMap);
-        return shadowMap;//drawShadows(shadowMap);
+
+        Texture shadowMapTex = mapShadows(occlusionMap);
+
+        return drawShadows(shadowMapTex);
     }
 
     private TextureRegion mapOcclusion() {
@@ -76,49 +78,47 @@ public class PostProcessingResource {
     }
 
     private Texture mapShadows(TextureRegion occlusionMap) {
-        ShaderProgram shader = GameScreen.ref.getShaderResource().getShadowDrawShader();
+        ShaderProgram shader = GameScreen.ref.getShaderResource().getShadowMapShader();
         if (!shader.isCompiled()) System.out.println(shader.getLog());
-
-        postCamera.setToOrtho(false, shadowMapFBO.getWidth(), shadowMapFBO.getHeight());
-        postCamera.update();
 
         shadowMapFBO.begin();
 
-        Gdx.gl20.glClearColor(0f, 0f, 0f, 0f);
-        Gdx.gl20.glClear(GL30.GL_COLOR_BUFFER_BIT);
-        Gdx.gl20.glEnable(GL30.GL_BLEND);
-        Gdx.gl20.glBlendFuncSeparate(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA, GL30.GL_ONE, GL30.GL_ONE);
+        Gdx.gl.glClearColor(0f,0f,0f,0f);
+        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
-        postBatch.setProjectionMatrix(postCamera.combined);
         postBatch.setShader(shader);
-        shader.setUniformf("ts", occlusionMap.getRegionWidth(), occlusionMap.getRegionHeight());
+
         postBatch.begin();
 
-        postBatch.draw(occlusionMap.getTexture(),0,0, occlusionMap.getRegionWidth(), occlusionMap.getRegionHeight());
+        shader.setUniformf("u_resolution", shadowMapFBO.getWidth(), shadowMapFBO.getHeight());
+
+        postCamera.setToOrtho(false, shadowMapFBO.getWidth(), shadowMapFBO.getHeight());
+        postBatch.setProjectionMatrix(postCamera.combined);
+
+        postBatch.draw(occlusionMap.getTexture(), center.x, center.y, shadowMapFBO.getWidth(), shadowMapFBO.getHeight());
 
         postBatch.end();
 
         shadowMapFBO.end();
-        Gdx.gl30.glDisable(GL30.GL_BLEND);
-        Gdx.gl30.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 
-        return shadowDrawFBO.getColorBufferTexture();
+        return shadowMapFBO.getColorBufferTexture();
     }
 
     private Texture drawShadows(Texture shadowMap) {
         ShaderProgram shader = GameScreen.ref.getShaderResource().getShadowDrawShader();
         if (!shader.isCompiled()) System.out.println(shader.getLog());
 
-        shadowDrawFBO.begin();
-        postBatch.begin();
+        postCamera.setToOrtho(false);
+        postBatch.setProjectionMatrix(postCamera.combined);
 
         postBatch.setShader(shader);
+        postBatch.begin();
         shader.setUniformf("u_resolution", resolution.x, resolution.y);
-        postBatch.draw(shadowMap,  center.x, center.y, shadowMap.getWidth(), shadowMap.getHeight());
-        postBatch.setShader(null);
-
+        postBatch.setColor(Color.RED);
+        postBatch.draw(shadowMap, center.x, center.y, resolution.x, resolution.y);
         postBatch.end();
-        shadowDrawFBO.end();
+
+        postBatch.setColor(Color.WHITE);
         return shadowDrawFBO.getColorBufferTexture();
     }
 
@@ -136,7 +136,7 @@ public class PostProcessingResource {
 
     private void renderDispose() {
         //occlusionFBO.dispose();
-        shadowMapFBO.dispose();
+        //shadowMapFBO.dispose();
         shadowDrawFBO.dispose();
     }
 
