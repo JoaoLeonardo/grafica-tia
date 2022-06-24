@@ -57,7 +57,6 @@ public class ShadowsResource implements EffectResource {
 
     private Texture mapShadows(TextureRegion occlusionMap, SpriteBatch batch, Vector2 resolution, Vector2 center) {
         ShaderProgram shader = GameScreen.ref.getShaderResource().getShadowMapShader();
-        if (!shader.isCompiled()) System.out.println(shader.getLog());
 
         shadowMapFBO.begin();
         batch.begin();

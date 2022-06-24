@@ -83,7 +83,11 @@ public class GameScreen implements Screen {
 
         // renderiza os elementos do mundo
         renderer.getBatch().begin();
-        if (TacticalInfiltrationAction.assetManager.update()) gameWorld.render();
+        if (TacticalInfiltrationAction.assetManager.update()) {
+            gameWorld.render();
+            renderer.getBatch().flush();
+            TacticalInfiltrationAction.postProcessingResource.apply(renderer.getBatch());
+        }
         renderer.getBatch().end();
     }
 

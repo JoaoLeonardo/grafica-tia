@@ -42,7 +42,6 @@ public abstract class World implements ApplicationListener {
         for (ActionController actionController : actionControllerList) actionController.drawElements(batch);
         gameScreen.getCamera().position.set(getPlayerPosition(), 0);
         gameScreen.getCamera().update();
-        TacticalInfiltrationAction.postProcessingResource.apply(batch);
     }
 
     abstract boolean hasCollidedWithAliveEntity(Bullet bullet);

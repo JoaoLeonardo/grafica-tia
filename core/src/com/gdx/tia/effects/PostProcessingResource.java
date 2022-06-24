@@ -42,6 +42,8 @@ public class PostProcessingResource implements EffectResource {
         // aplica o efeito de sombras para todos os casters do World
         Texture shadows = this.shadowsResource.renderShadows(postBatch, resolution, center);
         mainBatch.draw(shadows, -1, 1, 2, -2);
+
+        mainBatch.flush();
     }
 
     private void calculateCenter() {
