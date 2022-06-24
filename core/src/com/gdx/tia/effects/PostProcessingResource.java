@@ -65,14 +65,25 @@ public class PostProcessingResource {
 
     private TextureRegion mapOcclusion() {
         occlusionFBO.begin();
-        postBatch.begin();
 
-        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
         Gdx.gl.glClearColor(0f,0f,0f,0f);
+        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+
+        postCamera.setToOrtho(false, occlusionFBO.getWidth(), occlusionFBO.getHeight());
+
+        postCamera.translate(center.x - 256/2f, center.y - 256/2f);
+
+        postCamera.update();
+
+        postBatch.setProjectionMatrix(postCamera.combined);
+
+        postBatch.setShader(null);
+        postBatch.begin();
 
         for (Sprite caster : World.currentStage.getShadowCasters()) caster.draw(postBatch);
 
         postBatch.end();
+
         occlusionFBO.end();
         return new TextureRegion(occlusionFBO.getColorBufferTexture());
     }
@@ -90,12 +101,12 @@ public class PostProcessingResource {
 
         postBatch.begin();
 
-        shader.setUniformf("u_resolution", shadowMapFBO.getWidth(), shadowMapFBO.getHeight());
+        shader.setUniformf("u_resolution", 256, 256);
 
         postCamera.setToOrtho(false, shadowMapFBO.getWidth(), shadowMapFBO.getHeight());
         postBatch.setProjectionMatrix(postCamera.combined);
 
-        postBatch.draw(occlusionMap.getTexture(), center.x, center.y, shadowMapFBO.getWidth(), shadowMapFBO.getHeight());
+        postBatch.draw(occlusionMap.getTexture(), 0, 0, shadowMapFBO.getWidth(), shadowMapFBO.getHeight());
 
         postBatch.end();
 
