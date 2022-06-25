@@ -125,4 +125,6 @@ public class AgentProcessor implements InputProcessor {
 
     private Vector2 getMouseInterval() { return GameScreen.ref.getMouseInterval(); }
 
+    public  Vector2 getMovementDirection() { return movementDirection; }
+
 }

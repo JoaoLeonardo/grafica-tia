@@ -4,12 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
+import com.gdx.tia.element.ShadowCaster;
 import com.gdx.tia.interfaces.EffectResource;
 import com.gdx.tia.screens.GameScreen;
 
@@ -17,7 +17,7 @@ import java.util.HashMap;
 
 public class ShadowsResource implements EffectResource {
 
-    private HashMap<Integer, Sprite> shadowCasters;
+    private HashMap<Integer, ShadowCaster> shadowCasters;
 
     private FrameBuffer occlusionFBO;
     private FrameBuffer shadowMapFBO;
@@ -49,7 +49,8 @@ public class ShadowsResource implements EffectResource {
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
         Gdx.gl.glClearColor(0f,0f,0f,0f);
 
-        for (Sprite caster : shadowCasters.values()) caster.draw(batch);
+        for (ShadowCaster caster : shadowCasters.values())
+            batch.draw(caster.getSprite(), caster.getPosition().x, caster.getPosition().y);
 
         batch.end();
         occlusionFBO.end();
@@ -97,14 +98,14 @@ public class ShadowsResource implements EffectResource {
         return new FrameBuffer(Pixmap.Format.RGBA8888, (int) resolution.x, (int) resolution.y, false);
     }
 
-    public int registerAsCaster(Sprite caster) {
+    public int registerAsCaster(ShadowCaster caster) {
         int newKey = shadowCasters.size();
         while (shadowCasters.containsKey(newKey)) newKey++;
         shadowCasters.put(newKey, caster);
         return newKey;
     }
 
-    public void updateCaster(int key, Sprite caster) {
+    public void updateCaster(int key, ShadowCaster caster) {
         shadowCasters.put(key, caster);
     }
 

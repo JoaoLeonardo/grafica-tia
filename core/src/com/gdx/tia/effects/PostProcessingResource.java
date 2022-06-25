@@ -51,6 +51,9 @@ public class PostProcessingResource implements EffectResource {
         Vector3 cameraPosition = GameScreen.ref.getCamera().position;
         center.x = (cameraPosition.x != 0 ? cameraPosition.x : resolution.x) - resolution.x / 2f;
         center.y = (cameraPosition.x != 0 ? cameraPosition.y : resolution.y) - resolution.y / 2f;
+
+        // TODO: corrigir de acordo com o movimento do player
+        //center.x = center.x + 2;
     }
 
     @Override
