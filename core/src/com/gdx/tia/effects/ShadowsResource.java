@@ -17,6 +17,8 @@ import java.util.HashMap;
 
 public class ShadowsResource implements EffectResource {
 
+    private static int SHADOW_LOOKUP_NB = 42;
+
     private HashMap<Integer, ShadowCaster> shadowCasters;
 
     private FrameBuffer occlusionFBO;
@@ -38,7 +40,6 @@ public class ShadowsResource implements EffectResource {
 
         Texture shadowsFBOTex = drawShadows(shadowMap, batch, resolution, center);
         shadowDrawFBO.dispose();
-
         return shadowsFBOTex;
     }
 
@@ -50,7 +51,7 @@ public class ShadowsResource implements EffectResource {
         Gdx.gl.glClearColor(0f,0f,0f,0f);
 
         for (ShadowCaster caster : shadowCasters.values())
-            batch.draw(caster.getSprite(), caster.getPosition().x, caster.getPosition().y);
+            batch.draw(caster.getSprite(), caster.getPosition().x, caster.getPosition().y + SHADOW_LOOKUP_NB);
 
         batch.end();
         occlusionFBO.end();
@@ -59,6 +60,7 @@ public class ShadowsResource implements EffectResource {
 
     private Texture mapShadows(TextureRegion occlusionMap, SpriteBatch batch, Vector2 resolution, Vector2 center) {
         ShaderProgram shader = GameScreen.ref.getShaderResource().getShadowMapShader();
+        if (!shader.isCompiled()) System.out.println(shader.getLog());
 
         shadowMapFBO.begin();
         batch.begin();
@@ -68,13 +70,14 @@ public class ShadowsResource implements EffectResource {
 
         batch.setShader(shader);
         shader.setUniformf("u_resolution", resolution.x, resolution.y);
+        shader.setUniformf("u_lookup_range", SHADOW_LOOKUP_NB);
         batch.draw(occlusionMap, center.x, center.y, occlusionMap.getRegionWidth(), occlusionMap.getRegionHeight());
         batch.setShader(null);
 
         batch.end();
         shadowMapFBO.end();
 
-        return  shadowMapFBO.getColorBufferTexture();
+        return shadowMapFBO.getColorBufferTexture();
     }
 
     private Texture drawShadows(Texture shadowMap, SpriteBatch batch, Vector2 resolution, Vector2 center) {
