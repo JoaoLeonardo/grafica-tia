@@ -3,6 +3,7 @@ package com.gdx.tia.element;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.gdx.tia.TacticalInfiltrationAction;
+import com.gdx.tia.enums.Direction;
 
 public class ShadowCaster {
 
@@ -17,6 +18,7 @@ public class ShadowCaster {
     public ShadowCaster(Sprite sprite) {
         this.sprite = sprite;
         this.correctedPosition = new Vector2(this.sprite.getX(), this.sprite.getY());
+        this.movementDirection = Direction.HALT.displacementVector;
         this.register();
     }
 

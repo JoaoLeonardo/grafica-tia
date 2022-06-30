@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
-import com.gdx.tia.TacticalInfiltrationAction;
 import com.gdx.tia.controller.BulletController;
 import com.gdx.tia.controller.EnemyController;
 import com.gdx.tia.enums.Direction;
@@ -17,11 +16,13 @@ import java.util.Random;
 
 public class Enemy extends AliveEntity implements Pool.Poolable {
 
-    private final static int MOVEMENT_SPEED = 100;
+    private final static int MOVEMENT_SPEED = 120;
 
     // espaço entre uma direção e outra (de 30 à -30)
     private final static int X_SENSITIVITY = 30;
     private final static int Y_SENSITIVITY = 30;
+
+    private ShadowCaster shadowCaster;
 
     private Vector2 position;
 
@@ -37,8 +38,6 @@ public class Enemy extends AliveEntity implements Pool.Poolable {
     private ParticleEffect particleEffect;
     public float particleTimer;
 
-    private int scKey;
-
     public Enemy() {
         particleEffect = new ParticleEffect();
         particleEffect.load(Gdx.files.local("effects/enemy-hit.p"), Gdx.files.local("effects"));
@@ -49,7 +48,7 @@ public class Enemy extends AliveEntity implements Pool.Poolable {
 
     public void init(float initialX, float initialY) {
         sprite = EnemyController.ref.enemyAtlas.createSprite(Direction.HALT.name());
-        //scKey = TacticalInfiltrationAction.ref.getShadowsResource().registerAsCaster(sprite);
+        //shadowCaster = new ShadowCaster(sprite);
         position = new Vector2(initialX + 50, initialY);
         gunTimerMax = random.nextFloat() + 0.5f;
         gunTimer = 0;
@@ -81,7 +80,7 @@ public class Enemy extends AliveEntity implements Pool.Poolable {
             dodgeObject();
         }
 
-        //TacticalInfiltrationAction.ref.getShadowsResource().updateCaster(scKey, sprite);
+        //shadowCaster.update(sprite, direction.displacementVector);
     }
 
     public void moveToTarget(Direction direction) {
@@ -149,7 +148,10 @@ public class Enemy extends AliveEntity implements Pool.Poolable {
     @Override
     public void decreaseHealth() {
         super.decreaseHealth();
-        if (!alive) startParticleEffect();
+        if (!alive) {
+            startParticleEffect();
+            //shadowCaster.remove();
+        }
     }
 
     @Override
@@ -160,7 +162,7 @@ public class Enemy extends AliveEntity implements Pool.Poolable {
 
     public void dispose() {
         particleEffect.dispose();
-        //TacticalInfiltrationAction.ref.getShadowsResource().removeCaster(scKey);
+        //shadowCaster.remove();
     }
 
 }
