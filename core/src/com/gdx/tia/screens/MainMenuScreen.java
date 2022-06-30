@@ -72,9 +72,9 @@ public class MainMenuScreen implements Screen {
         titleDirection = Direction.UP;
 
         corrigirEscalas();
-        buttonPlay = new TextButton("Jogar", buttonStyle);
+        buttonPlay = new TextButton("PLAY", buttonStyle);
 
-        Label labelScore = new Label("Best score: " + score, new Label.LabelStyle(font, Color.WHITE));
+        Label labelScore = new Label("Best Score: " + score, new Label.LabelStyle(font, Color.WHITE));
 
         table.row().expandX().pad(8);
         table.add(title);
