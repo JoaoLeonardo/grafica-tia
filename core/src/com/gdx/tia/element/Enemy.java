@@ -48,7 +48,7 @@ public class Enemy extends AliveEntity implements Pool.Poolable {
 
     public void init(float initialX, float initialY) {
         sprite = EnemyController.ref.enemyAtlas.createSprite(Direction.HALT.name());
-        //shadowCaster = new ShadowCaster(sprite);
+        //shadowCaster = new ShadowCaster(sprite, true); bugged, try at your own risk
         position = new Vector2(initialX + 50, initialY);
         gunTimerMax = random.nextFloat() + 0.5f;
         gunTimer = 0;

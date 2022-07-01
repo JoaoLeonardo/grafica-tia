@@ -3,6 +3,7 @@ package com.gdx.tia.element;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
+import com.gdx.tia.TacticalInfiltrationAction;
 import com.gdx.tia.enums.AgentSpeech;
 import com.gdx.tia.screens.MainMenuScreen;
 import com.gdx.tia.utils.SpeechUtils;
@@ -65,5 +66,8 @@ public class Agent extends AliveEntity {
 
     public int getScore() { return score; }
 
-    public void dispose() { agentAtlas.dispose(); }
+    public void dispose() {
+        agentAtlas.dispose();
+        TacticalInfiltrationAction.ref.getShadowsResource().clearCasters();
+    }
 }

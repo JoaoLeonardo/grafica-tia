@@ -108,13 +108,11 @@ public class ShadowsResource implements EffectResource {
         return newKey;
     }
 
-    public void updateCaster(int key, ShadowCaster caster) {
-        shadowCasters.put(key, caster);
-    }
+    public void updateCaster(int key, ShadowCaster caster) { shadowCasters.put(key, caster); }
 
-    public void removeCaster(int key) {
-        shadowCasters.remove(key);
-    }
+    public void removeCaster(int key) { shadowCasters.remove(key); }
+
+    public void clearCasters() { shadowCasters.clear(); }
 
     @Override
     public void resize(int width, int height) {
